@@ -47,6 +47,7 @@ contract ticketingSystem {
     mapping(uint => Concert) L_Concert;
     mapping(uint => Ticket) L_Ticket;
 
+
     uint artist_count = 1;
     uint venue_count = 1;
     uint concert_count = 1;
@@ -152,10 +153,16 @@ contract ticketingSystem {
         require(block.timestamp > L_Concert[_concertId].concertDate,"You have to wait until the concert is over");
         require(msg.sender == L_Concert[_concertId].owner,"You are not authorized");
         uint temp = msg.value;
-        uint com = temp * L_Venue[L_Concert[_concertId].venueId].standardComission)/10000;
+        uint com = temp * L_Venue[L_Concert[_concertId].venueId].standardComission) / 10000;
         L_Artist[L_Concert[_concertId].artistId].owner.transfer(com);
         L_Venue[L_Concert[_concertId].venueId].owner.transfer(temp - com);
 
+    }
+
+    function offerTicketForSale(uint _ticketId, uint _salePrice) public OnlyOwnerTicket {
+        require(L_Concert[L_Ticket[_ticketId].concertId].ticketPrice >= _salePrice, "This amount is too high");
+        require(L_Ticket[_ticketId].isAvailable, "This ticket is not available");
+        L_Ticket[_ticketId].idAvailableForSale = true;
     }
 
 
