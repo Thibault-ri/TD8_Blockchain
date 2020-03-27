@@ -153,7 +153,7 @@ contract ticketingSystem {
         require(block.timestamp > L_Concert[_concertId].concertDate,"You have to wait until the concert is over");
         require(msg.sender == L_Concert[_concertId].owner,"You are not authorized");
         uint temp = msg.value;
-        uint com = temp * L_Venue[L_Concert[_concertId].venueId].standardComission) / 10000;
+        uint com = temp * L_Venue[L_Concert[_concertId].venueId].standardComission / 10000;
         L_Artist[L_Concert[_concertId].artistId].owner.transfer(com);
         L_Venue[L_Concert[_concertId].venueId].owner.transfer(temp - com);
 
