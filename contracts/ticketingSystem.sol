@@ -128,6 +128,24 @@ contract ticketingSystem {
         emit NewTicket(_concertId, _ticketOwner);
     }
 
+    function useTicket(uint _ticketId) public {
+        require(msg.sender == L_Ticket[_ticketId].owner,"You are not the owner of this ticket");
+        require(block.timestamp >= L_Concert[L_Ticket[_ticketId].concertId].concertDate - 1 days && block.timestamp >= L_Concert[L_Ticket[_ticketId].concertId].concertDate + 1 days, "The Date doesn't match the requirement");
+        require(L_Concert[L_Ticket[_ticketId].concertId].validatedByVenue,"This ticket has not been validate");
+        L_Ticket[_ticketId].isAvailable = false;
+    }
+
+    function buyTicket(uint _concertId) public payable{
+        require(msg.value == L_Concert[_concertId].ticketPrice, "The amount doesn't match the ticket price");
+        L_Concert[_concertId].owner.transfer(msg.value);
+        L_Concert[_concertId].totalMoneyCollected = L_Concert[_concertId].totalMoneyCollected + msg.value;
+        L_Artist[L_Concert[_concertId].artistId].ticketSold = L_Artist[L_Concert[_concertId].artistId].ticketSold + 1;
+        emitTicket(_concertId, msg.sender);
+
+    }
+
+    
+
 
 
 }
