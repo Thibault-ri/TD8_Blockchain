@@ -122,7 +122,7 @@ contract ticketingSystem {
 
     function emitTicket(uint _concertId, address payable _ticketOwner) public {
         require(msg.sender == L_Artist[L_Concert[_concertId].artistId].owner, "You have to buy the ticket");
-        Ticket memory t = Ticket(_concertId, _ticketOwner, true, false, L_Concert[_concertId].ticketPrice);
+        Ticket memory t = Ticket(_concertId, _ticketOwner,L_Concert[_concertId].ticketPrice, true, false);
         L_Ticket[ticket_count] = t;
         ticket_count = ticket_count + 1;
         L_Concert[_concertId].totalsoldTicket = L_Concert[_concertId].totalsoldTicket + 1;
@@ -159,7 +159,7 @@ contract ticketingSystem {
 
     }
 
-    function offerTicketForSale(uint _ticketId, uint _salePrice) public OnlyOwnerTicket {
+    function offerTicketForSale(uint _ticketId, uint _salePrice) public OnlyOwnerTicket(_ticketId) {
         require(L_Concert[L_Ticket[_ticketId].concertId].ticketPrice >= _salePrice, "This amount is too high");
         require(L_Ticket[_ticketId].isAvailable, "This ticket is not available");
         L_Ticket[_ticketId].idAvailableForSale = true;
