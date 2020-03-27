@@ -17,12 +17,12 @@ contract ticketingSystem {
     }
 
     struct Concert{
-        uint concertDate;
         uint artistId;
+        uint venueId;
+        uint concertDate;
         uint ticketPrice;
         uint totalsldTicket;
         uint totalMoneyCollected;
-        uint venueId;
         bool validatedByArtist;
         bool validatedByVenue;
         address owner;
@@ -39,6 +39,7 @@ contract ticketingSystem {
 
     event NewArtist(bytes32 _name, uint _artistCategory,address _owner,uint _ticketSold);
     event NewVenue(bytes32 _name, uint _capacity, uint _standardComission,address _owner);
+    event NewConcert(uint _artistId, uint _venueId, uint _concertDate, uint _ticketPrice, address _owner);
 
     mapping(uint => Artist) L_Artist;
     mapping(uint => Venue) L_Venue;
@@ -56,14 +57,14 @@ contract ticketingSystem {
         Artist memory a = Artist(_name,_artistCategory,msg.sender,0);
         L_Artist[artist_count] = a;
         artist_count = artist_count + 1;
-        emit NewArtist(_name,_artistCategory,msg.sender,0);
+        //emit NewArtist(_name,_artistCategory,msg.sender,0);
     }
 
     function artistsRegister(uint id) public view returns(Artist memory) {
         return(L_Artist[id]);
     }
 
-    function modifyArtist(uint _artistId, bytes32 _name, uint _artistCategory, address payable _newOwner) 
+    function modifyArtist(uint _artistId, bytes32 _name, uint _artistCategory, address _newOwner) 
     public OnlyOwnerArtist(_artistId){
         L_Artist[_artistId].name = _name;
         L_Artist[_artistId].artistCategory = _artistCategory;
@@ -84,7 +85,7 @@ contract ticketingSystem {
         Venue memory v = Venue(_name,_capacity,_standardComission,msg.sender);
         L_Venue[venue_count] = v;
         venue_count = venue_count + 1;
-        emit NewVenue(_name,_capacity,_standardComission,msg.sender);
+        //emit NewVenue(_name,_capacity,_standardComission,msg.sender);
     }
 
     function venueRegister(uint id) public view returns(Venue memory) {
@@ -96,6 +97,16 @@ contract ticketingSystem {
        L_Venue[_venueId].capacity=_capacity;
        L_Venue[_venueId].standardComission=_standardComission;
        L_Venue[_venueId].owner=_newOwner;
+    }
+
+    function createConcert(uint _artistId, uint _venueId, uint _concertDate, uint _ticketPrice) public {
+        bool _validatedByArtist = msg.sender == L_Artist[_artistId].owner;
+        bool _validatedByVenue = msg.sender == L_Venue[_venueId].owner;
+
+        Concert memory c = Concert(_artistId,_venueId,_concertDate,_ticketPrice,0,0,_validatedByArtist,_validatedByVenue,msg.sender);
+        L_Concert[concert_count] = c;
+        concert_count = concert_count + 1;
+        //emit NewConcert(_artistId,_venueId,_concertDate,_ticketPrice,msg.sender);
     }
 
 }
